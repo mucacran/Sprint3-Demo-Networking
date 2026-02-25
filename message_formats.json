@@ -1,0 +1,18 @@
+[
+  {
+    "action": "ping"
+  },
+  {
+    "action": "server-time"
+  },
+  {
+    "action": "add_note",
+    "data": {
+      "title": "Título de la nota",
+      "content": "Contenido de la nota"
+    }
+  },
+  {
+    "action": "list_notes"
+  }
+]
