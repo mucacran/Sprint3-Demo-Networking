@@ -5,75 +5,111 @@ from datetime import datetime
 HOST = '127.0.0.1'
 PORT = 5050
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind((HOST, PORT))
-server.listen()
 
-print(f"Server listening on {HOST}:{PORT}")
-
-while True:
-    conn, addr = server.accept()
-    print(f"Connected by {addr}")
+def handle_client(conn):
+    """
+    Handle a single client connection.
+    Receives data, processes request, and sends response.
+    """
 
     try:
         data = conn.recv(1024)
 
         if not data:
-            conn.close()
-            continue
+            return
 
         try:
             message = json.loads(data.decode())
         except json.JSONDecodeError:
-            response = {"error": "Invalid JSON format"}
-            conn.send(json.dumps(response).encode())
-            conn.close()
-            continue
+            send_response(conn, {"error": "Invalid JSON format"})
+            return
 
         action = message.get("action")
 
         if not action:
-            response = {"error": "Missing action field"}
+            send_response(conn, {"error": "Missing action field"})
+            return
 
-        elif action == "ping":
-            response = {"response": "pong"}
+        if action == "ping":
+            send_response(conn, {"response": "pong"})
 
         elif action == "server-time":
-            response = {"response": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+            send_response(conn, {
+                "response": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            })
 
         elif action == "add_note":
-            try:
-                title = message["data"]["title"]
-                content = message["data"]["content"]
-
-                with open("notes.txt", "a") as file:
-                    file.write(f"{title}|{content}\n")
-
-                response = {"response": "note added"}
-
-            except KeyError:
-                response = {"error": "Missing note data"}
+            add_note(conn, message)
 
         elif action == "list_notes":
-            notes = []
-
-            try:
-                with open("notes.txt", "r") as file:
-                    for line in file:
-                        title, content = line.strip().split("|", 1)
-                        notes.append({"title": title, "content": content})
-            except FileNotFoundError:
-                pass
-
-            response = {"response": notes}
+            list_notes(conn)
 
         else:
-            response = {"error": "Unknown action"}
-
-        conn.send(json.dumps(response).encode())
+            send_response(conn, {"error": "Unknown action"})
 
     except Exception as e:
         print("Unexpected error:", e)
 
     finally:
         conn.close()
+
+
+def send_response(conn, data):
+    """
+    Sends JSON response to client.
+    """
+    conn.send(json.dumps(data).encode())
+
+
+def add_note(conn, message):
+    """
+    Adds a note to the local file.
+    """
+    try:
+        title = message["data"]["title"]
+        content = message["data"]["content"]
+
+        with open("notes.txt", "a") as file:
+            file.write(f"{title}|{content}\n")
+
+        send_response(conn, {"response": "note added"})
+
+    except KeyError:
+        send_response(conn, {"error": "Missing note data"})
+
+
+def list_notes(conn):
+    """
+    Returns all saved notes.
+    """
+    notes = []
+
+    try:
+        with open("notes.txt", "r") as file:
+            for line in file:
+                title, content = line.strip().split("|", 1)
+                notes.append({"title": title, "content": content})
+    except FileNotFoundError:
+        pass
+
+    send_response(conn, {"response": notes})
+
+
+def start_server():
+    """
+    Starts the TCP server and listens for connections.
+    """
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((HOST, PORT))
+    server.listen()
+
+    print(f"Server listening on {HOST}:{PORT}")
+
+    while True:
+        conn, addr = server.accept()
+        print(f"Connected by {addr}")
+        handle_client(conn)
+
+
+if __name__ == "__main__":
+    start_server()
