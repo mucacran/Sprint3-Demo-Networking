@@ -2,3 +2,5 @@ Networking|Learning TCP server
 XXXXXX|LearningXXXXXXXXX TCP server
 YYYYY YYYYY|Ya no SSSSSS
 YYYYY YYYYY|eeeeeeeeeeeeeee
+Meeting Notes|Discuss project timeline and milestones.
+Meeting Notes|Discuss project timeline and milestones.

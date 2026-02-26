@@ -7,12 +7,12 @@ PORT = 5050
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((HOST, PORT))
 
-'''
+
 message = {
     "action": "list_notes"
 }
 '''
-'''
+
 message={
     "action": "add_note",
     "data": {
@@ -21,6 +21,7 @@ message={
     }
 
 }
+'''
 '''
 message = {
     "action": "server-time"
@@ -31,6 +32,7 @@ message={
 
 
 }
+'''
 
 client.send(json.dumps(message).encode())
 
