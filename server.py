@@ -15,45 +15,65 @@ while True:
     conn, addr = server.accept()
     print(f"Connected by {addr}")
 
-    data = conn.recv(1024)
+    try:
+        data = conn.recv(1024)
 
-    if not data:
-        conn.close()
-        continue
-
-    message = json.loads(data.decode())
-    print("Received:", message)
-
-    if message["action"] == "ping":
-        response = {"response": "pong"}
-
-    elif message["action"] == "server-time":
-        response = {"response": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
-
-    elif message["action"] == "add_note":
-        title = message["data"]["title"]
-        content = message["data"]["content"]
-
-        with open("notes.txt", "a") as file:
-            file.write(f"{title}|{content}\n")
-
-        response = {"response": "note added"}
-
-    elif message["action"] == "list_notes":
-        notes = []
+        if not data:
+            conn.close()
+            continue
 
         try:
-            with open("notes.txt", "r") as file:
-                for line in file:
-                    title, content = line.strip().split("|")
-                    notes.append({"title": title, "content": content})
-        except FileNotFoundError:
-            pass
+            message = json.loads(data.decode())
+        except json.JSONDecodeError:
+            response = {"error": "Invalid JSON format"}
+            conn.send(json.dumps(response).encode())
+            conn.close()
+            continue
 
-        response = {"response": notes}
+        action = message.get("action")
 
-    else:
-        response = {"response": "unknown action"}
+        if not action:
+            response = {"error": "Missing action field"}
 
-    conn.send(json.dumps(response).encode())
-    conn.close()
+        elif action == "ping":
+            response = {"response": "pong"}
+
+        elif action == "server-time":
+            response = {"response": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+        elif action == "add_note":
+            try:
+                title = message["data"]["title"]
+                content = message["data"]["content"]
+
+                with open("notes.txt", "a") as file:
+                    file.write(f"{title}|{content}\n")
+
+                response = {"response": "note added"}
+
+            except KeyError:
+                response = {"error": "Missing note data"}
+
+        elif action == "list_notes":
+            notes = []
+
+            try:
+                with open("notes.txt", "r") as file:
+                    for line in file:
+                        title, content = line.strip().split("|", 1)
+                        notes.append({"title": title, "content": content})
+            except FileNotFoundError:
+                pass
+
+            response = {"response": notes}
+
+        else:
+            response = {"error": "Unknown action"}
+
+        conn.send(json.dumps(response).encode())
+
+    except Exception as e:
+        print("Unexpected error:", e)
+
+    finally:
+        conn.close()
