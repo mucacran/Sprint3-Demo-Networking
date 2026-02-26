@@ -7,11 +7,29 @@ PORT = 5050
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((HOST, PORT))
 
+message = {
+
+}
+'''
+message = {
+    "action": "add_note",
+    "data": {
+        "Diciplina": "Meeting Notes",
+        "Deporte": "Discuss project timeline and milestones."
+    }
+}
+
+
+
+message = {
+    "action": "unmensage_a_garcia"
+}
+
 
 message = {
     "action": "list_notes"
 }
-'''
+
 
 message={
     "action": "add_note",
@@ -21,11 +39,20 @@ message={
     }
 
 }
-'''
-'''
+
 message = {
     "action": "server-time"
 }
+
+
+message = {
+    "action": "ping"
+}
+
+message = {
+    "action": "server-time"
+}
+
 
 message={
     "action": "add_note",
