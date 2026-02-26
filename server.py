@@ -28,11 +28,19 @@ This project demonstrates understanding of:
 """
 import socket # For TCP socket programming
 import json # For JSON encoding and decoding
+import logging # For logging errors and server activity
 from datetime import datetime # For server time response
+
 
 HOST = '127.0.0.1' # Localhost IP address
 PORT = 5050 # Port number to listen on (non-privileged ports are > 1023)
 
+# Configure logging to write to server.log with INFO level and timestamp
+logging.basicConfig(
+    filename="server.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 def handle_client(conn):
     """
@@ -80,7 +88,8 @@ def handle_client(conn):
             send_response(conn, {"error": "Unknown action"})
 
     except Exception as e:
-        print("Unexpected error:", e)
+        # print("Unexpected error:", e)
+        logging.error(f"Unexpected error: {e}")
 
     finally:
         conn.close()
@@ -101,7 +110,7 @@ def add_note(conn, message):
         title = message["data"]["title"]
         content = message["data"]["content"]
 
-        with open("notes.txt", "a") as file:
+        with open("notes.txt", "a", encoding="utf-8") as file:
             file.write(f"{title}|{content}\n")
 
         send_response(conn, {"response": "note added"})
@@ -118,7 +127,7 @@ def list_notes(conn):
     notes = []
 
     try:
-        with open("notes.txt", "r") as file:
+        with open("notes.txt", "r", encoding="utf-8") as file:
             for line in file:
                 title, content = line.strip().split("|", 1)
                 notes.append({"title": title, "content": content})
@@ -141,12 +150,15 @@ def start_server():
     # Start listening for incoming connections
     server.listen()
 
-    print(f"Server listening on {HOST}:{PORT}")
+    # Log server startup
+    #print(f"Server listening on {HOST}:{PORT}")
+    logging.info(f"Server listening on {HOST}:{PORT}")
 
     while True:
         conn, addr = server.accept()
         # Print client address and handle connection in a separate function
-        print(f"Connected by {addr}")
+        #print(f"Connected by {addr}")
+        logging.info(f"Connected by {addr}")
         handle_client(conn)
 
 # Entry point of the program
