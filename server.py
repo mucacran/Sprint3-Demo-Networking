@@ -1,3 +1,31 @@
+"""
+CSE 310 - Applied Programming
+Module 3 - Networking
+Author: Sergio Bravo Morán
+Description:
+This program implements a TCP client-server architecture using Python sockets.
+The server listens on localhost and a specified port.
+It supports multiple JSON-based requests including:
+- ping
+- server-time
+- add_note
+- list_notes
+
+Features:
+- TCP connection handling
+- JSON message protocol
+- Persistent storage using local file
+- Error handling for invalid input
+- Continuous listening using while True loop
+
+This project demonstrates understanding of:
+- OSI model (Transport layer concepts)
+- TCP socket programming
+- JSON encoding and decoding
+- Client-server architecture
+- Basic data persistence
+- Error handling and input validation
+"""
 import socket
 import json
 from datetime import datetime
