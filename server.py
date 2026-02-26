@@ -157,7 +157,7 @@ def start_server():
     while True:
         conn, addr = server.accept()
         # Print client address and handle connection in a separate function
-        #print(f"Connected by {addr}")
+        print(f"Connected by {addr}")
         logging.info(f"Connected by {addr}")
         handle_client(conn)
 
