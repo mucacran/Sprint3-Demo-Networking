@@ -1,5 +1,6 @@
 import socket
 import json
+from datetime import datetime
 
 HOST = '127.0.0.1'
 PORT = 5050
@@ -10,21 +11,49 @@ server.listen()
 
 print(f"Server listening on {HOST}:{PORT}")
 
-conn, addr = server.accept()
-print(f"Connected by {addr}")
+while True:
+    conn, addr = server.accept()
+    print(f"Connected by {addr}")
 
-data = conn.recv(1024)
+    data = conn.recv(1024)
 
-message = json.loads(data.decode())
+    if not data:
+        conn.close()
+        continue
 
-print("Received:", message)
+    message = json.loads(data.decode())
+    print("Received:", message)
 
-if message["action"] == "ping":
-    response = {"response": "pong"}
-else:
-    response = {"response": "unknown action"}
+    if message["action"] == "ping":
+        response = {"response": "pong"}
 
-conn.send(json.dumps(response).encode())
+    elif message["action"] == "server-time":
+        response = {"response": datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
 
-conn.close()
-server.close()
+    elif message["action"] == "add_note":
+        title = message["data"]["title"]
+        content = message["data"]["content"]
+
+        with open("notes.txt", "a") as file:
+            file.write(f"{title}|{content}\n")
+
+        response = {"response": "note added"}
+
+    elif message["action"] == "list_notes":
+        notes = []
+
+        try:
+            with open("notes.txt", "r") as file:
+                for line in file:
+                    title, content = line.strip().split("|")
+                    notes.append({"title": title, "content": content})
+        except FileNotFoundError:
+            pass
+
+        response = {"response": notes}
+
+    else:
+        response = {"response": "unknown action"}
+
+    conn.send(json.dumps(response).encode())
+    conn.close()

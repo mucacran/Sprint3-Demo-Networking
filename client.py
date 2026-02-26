@@ -7,7 +7,13 @@ PORT = 5050
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((HOST, PORT))
 
-message = {"action": "ping"}
+message = {
+    "action": "add_note",
+    "data": {
+        "title": "Networking",
+        "content": "Learning TCP server"
+    }
+}
 
 client.send(json.dumps(message).encode())
 
