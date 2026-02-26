@@ -151,13 +151,13 @@ def start_server():
     server.listen()
 
     # Log server startup
-    #print(f"Server listening on {HOST}:{PORT}")
+    print(f"Server listening on {HOST}:{PORT}")
     logging.info(f"Server listening on {HOST}:{PORT}")
 
     while True:
         conn, addr = server.accept()
         # Print client address and handle connection in a separate function
-        print(f"Connected by {addr}")
+        #print(f"Connected by {addr}")
         logging.info(f"Connected by {addr}")
         handle_client(conn)
 

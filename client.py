@@ -30,27 +30,27 @@ message = {
 message = {
     "action": "list_notes"
 }
-'''
+
 
 message={
     "action": "add_note",
     "data": {
-        "title": "Titulo favorito",
-        "content": "Añadimos las notas mas dulces de mi vida."
+        "title": "Titulo de video",
+        "content": "Añadimos las notas para el video."
     }
 
 }
-'''
+
 
 message = {
     "action": "server-time"
 }
-
+'''
 
 message = {
     "action": "ping"
 }
-
+'''
 message = {
     "action": "server-time"
 }
