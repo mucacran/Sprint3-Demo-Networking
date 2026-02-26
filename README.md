@@ -38,7 +38,7 @@ Instructions for using the software:
 
 1.  Start the server first.
 2.  Modify the `client.py` file to test different JSON actions:
-    -   `"ping"`
+    -   `ping`
     -   `"server-time"`
     -   `"add_note"`
     -   `"list_notes"`
