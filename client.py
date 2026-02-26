@@ -8,11 +8,7 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((HOST, PORT))
 
 message = {
-    "action": "list_notes",
-    "data": {
-        "title": "YYYYY YYYYY",
-        "content": "Ya no SSSSSS"
-    }
+    "action": "list_notes"
 }
 
 client.send(json.dumps(message).encode())
