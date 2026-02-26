@@ -26,12 +26,12 @@ This project demonstrates understanding of:
 - Basic data persistence
 - Error handling and input validation
 """
-import socket
-import json
-from datetime import datetime
+import socket # For TCP socket programming
+import json # For JSON encoding and decoding
+from datetime import datetime # For server time response
 
-HOST = '127.0.0.1'
-PORT = 5050
+HOST = '127.0.0.1' # Localhost IP address
+PORT = 5050 # Port number to listen on (non-privileged ports are > 1023)
 
 
 def handle_client(conn):
@@ -41,13 +41,17 @@ def handle_client(conn):
     """
 
     try:
-        data = conn.recv(1024)
+        # Receive up to 1024 bytes of data from client
+        data = conn.recv(1024) 
 
         if not data:
-            return
+            return # No data received, close connection
 
         try:
+            # Decode bytes to string and parse JSON
             message = json.loads(data.decode())
+        
+        # Handle JSON decoding errors and send error response to client
         except json.JSONDecodeError:
             send_response(conn, {"error": "Invalid JSON format"})
             return
@@ -105,7 +109,8 @@ def add_note(conn, message):
     except KeyError:
         send_response(conn, {"error": "Missing note data"})
 
-
+# This function reads notes from the local file and
+# sends them back to the client as a JSON response.
 def list_notes(conn):
     """
     Returns all saved notes.
@@ -127,8 +132,13 @@ def start_server():
     """
     Starts the TCP server and listens for connections.
     """
+    # Create TCP socket using IPv4 and stream protocol
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    
+    # Bind server to host and port
     server.bind((HOST, PORT))
+
+    # Start listening for incoming connections
     server.listen()
 
     print(f"Server listening on {HOST}:{PORT}")
@@ -138,6 +148,7 @@ def start_server():
         print(f"Connected by {addr}")
         handle_client(conn)
 
-
+# Entry point of the program
 if __name__ == "__main__":
+    # Start the server
     start_server()
