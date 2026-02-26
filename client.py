@@ -8,10 +8,10 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((HOST, PORT))
 
 message = {
-    "action": "add_note",
+    "action": "list_notes",
     "data": {
-        "title": "Networking",
-        "content": "Learning TCP server"
+        "title": "YYYYY YYYYY",
+        "content": "Ya no SSSSSS"
     }
 }
 
