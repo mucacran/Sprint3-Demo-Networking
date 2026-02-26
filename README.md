@@ -68,11 +68,8 @@ No external libraries required.
 I found these websites useful in developing this software:
 
 *   [Python Socket Programming Documentation\](https://docs.python.org/3/library/socket.html)
-
 *   [JSON Module Documentation\](https://docs.python.org/3/library/json.html)
-
 *   [Python Logging Documentation\](https://docs.python.org/3/library/logging.html)
-
 *   [OSI Model Explanation\](https://www.youtube.com/watch?v=vv4y_uOneC0)
 
 ## Future Work
